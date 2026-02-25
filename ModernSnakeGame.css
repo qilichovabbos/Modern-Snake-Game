@@ -1,0 +1,34 @@
+body, html {
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+  background: linear-gradient(to bottom, #0a0c1e, #060a16);
+  font-family: 'Segoe UI', sans-serif;
+}
+
+canvas {
+  display: block;
+  margin: 0 auto;
+  background: transparent;
+}
+
+#overlay {
+  position: absolute;
+  top: 0; left: 0; right: 0; bottom: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  background: rgba(6,6,10,0.8);
+  color: #fff;
+}
+
+#startBtn {
+  padding: 12px 24px;
+  font-size: 18px;
+  border: none;
+  border-radius: 12px;
+  background-color: #54ffd6;
+  color: #000;
+  cursor: pointer;
+}
