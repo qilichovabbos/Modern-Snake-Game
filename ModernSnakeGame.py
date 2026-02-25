@@ -1,7 +1,6 @@
-import asyncio
 import json
 import os
-
+from flask import Flask, request
 from aiogram import Bot, Dispatcher, F
 from aiogram.types import Message, InlineKeyboardMarkup, InlineKeyboardButton, WebAppInfo
 from aiogram.filters import CommandStart
@@ -9,7 +8,7 @@ from dotenv import load_dotenv
 
 load_dotenv()
 BOT_TOKEN = os.getenv("BOT_TOKEN")
-WEBAPP_URL = os.getenv("WEBAPP_URL")  # URL hosting snake.html
+WEBAPP_URL = os.getenv("WEBAPP_URL")  # Static site URL
 
 bot = Bot(BOT_TOKEN)
 dp = Dispatcher()
@@ -66,8 +65,22 @@ async def webapp_data_handler(message: Message):
         text += f"{i}. {p['username']} — {p['best_score']}\n"
     await message.answer(f"🎮 Game Over!\nYour Score: {score}\n\n{text}")
 
-async def main():
-    await dp.start_polling(bot)
+# ===== Flask server =====
+app = Flask(__name__)
 
-if __name__=="__main__":
-    asyncio.run(main())
+@app.route(f"/{BOT_TOKEN}", methods=["POST"])
+async def telegram_webhook():
+    update = request.json
+    await dp.process_update(update)
+    return "OK"
+
+if __name__ == "__main__":
+    # Set webhook once (replace YOUR_DOMAIN with HTTPS domain)
+    import asyncio
+    async def set_hook():
+        webhook_url = f"https://YOUR_DOMAIN/{BOT_TOKEN}"
+        await bot.set_webhook(webhook_url)
+    asyncio.run(set_hook())
+
+    # Start Flask server
+    app.run(host="0.0.0.0", port=int(os.environ.get("PORT", 5000)))
